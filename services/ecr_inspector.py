@@ -1,5 +1,5 @@
-from ..base_inspector import BaseInspector
-from findings.findings_extractor import extract_findings
+from src.base_inspector import BaseInspector
+from src.findings_extractor import extract_findings
 from utils.aws_cli import run_aws_cli
 
 class EcrInspector(BaseInspector):
