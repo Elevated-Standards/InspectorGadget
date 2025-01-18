@@ -1,7 +1,7 @@
 import os
 import boto3
-from services.base_inspector import BaseInspector
-from ..findings.findings_extractor import extract_findings
+from src.services.base_inspector import BaseInspector
+from src.findings.findings_extractor import extract_findings
 from utils.aws_cli import run_aws_cli
 
 class CisInspector(BaseInspector):
