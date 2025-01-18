@@ -1,8 +1,11 @@
 import os
 import json
+import datetime import datetime
+import sys
 import logging
-from typing import List, Tuple, Optional
 import boto3
+from botocore.exceptions import ClientError
+from typing import List, Tuple, Optional
 
 # Configure logging
 logger = logging.getLogger(__name__)
