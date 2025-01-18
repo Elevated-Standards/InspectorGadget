@@ -1,0 +1,54 @@
+name: AWS Inspector Scan Results Collection
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 28-31 * *'
+env:
+  AWS_REGION : "us-east-1"
+  CI_COMMIT_MESSAGE: AWS Inspector Scan Results
+permissions:
+  id-token: write   
+  contents: write   
+  pull-requests: write  
+jobs:
+  aws-evidence:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Git clone the repository
+      uses: actions/checkout@v4
+    - name: Configure AWS credentials with OIDC
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        role-to-assume: arn:aws:iam::145023120730:role/elevated-standards
+        role-session-name: evidencecollection
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Debug Environment Variables
+      run: |
+        echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+        echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+        echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}"
+        echo "AWS_REGION=${AWS_REGION}"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install boto3
+
+    - name: Prepping Environment
+      run: |
+        bash utils/date.sh
+        mkdir -p $GITHUB_WORKSPACE/output/cis
+        mkdir -p $GITHUB_WORKSPACE/output/inspector
+
+    - name: Run AWS Inspector Scan Results
+      run: |
+        export PYTHONPATH="$PYTHONPATH:$(pwd)/src"
+
+    - name: Commit and Push Results
+      run: |
+         git config --local user.name "GitHub Actions"
+         git config --local user.email "actions@github.com"
+         git add -A
+         git commit -m "${{ env.CI_COMMIT_MESSAGE }}"
+         git push origin HEAD:${{ github.ref }}
