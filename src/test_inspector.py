@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from findings.inspector import Inspector
+from src.inspector import Inspector
 
 class TestInspector(unittest.TestCase):
 

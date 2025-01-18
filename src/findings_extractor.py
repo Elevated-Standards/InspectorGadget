@@ -1,16 +1,25 @@
 import os
 import json
-import datetime import datetime
+import datetime
 import sys
 import logging
 import boto3
 from botocore.exceptions import ClientError
-from typing import List, Dict, Any
 from typing import List, Dict, Any, Optional
 
 logger = logging.getLogger(__name__)
 
 def extract_basic_info(finding: Dict[str, Any], aws_service: str) -> Dict[str, Any]:
+    """
+    Extracts basic information from a finding.
+
+    Args:
+        finding (Dict[str, Any]): The finding dictionary.
+        aws_service (str): The name of the AWS service.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing basic information about the finding.
+    """
     return {
         "AWS Service": aws_service,
         "findingArn": finding.get("findingArn"),
@@ -24,6 +33,16 @@ def extract_basic_info(finding: Dict[str, Any], aws_service: str) -> Dict[str, A
     }
 
 def extract_service_specific_info(finding: Dict[str, Any], aws_service: str) -> Dict[str, Any]:
+    """
+    Extracts service-specific information from a finding.
+
+    Args:
+        finding (Dict[str, Any]): The finding dictionary.
+        aws_service (str): The name of the AWS service.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing service-specific information about the finding.
+    """
     return {
         "codeVulnerabilityDetails": finding.get("codeVulnerabilityDetails") if aws_service == "Lambda" else None,
         "awsLambdaFunction": finding.get("resources", [{}])[0].get("details", {}).get("awsLambdaFunction") if aws_service == "Lambda" else None,
@@ -32,6 +51,15 @@ def extract_service_specific_info(finding: Dict[str, Any], aws_service: str) -> 
     }
 
 def extract_vulnerability_details(finding: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Extracts vulnerability details from a finding.
+
+    Args:
+        finding (Dict[str, Any]): The finding dictionary.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing vulnerability details about the finding.
+    """
     return {
         "epss": finding.get("epss", {}).get("score"),
         "fixAvailable": finding.get("fixAvailable"),
@@ -42,6 +70,15 @@ def extract_vulnerability_details(finding: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 def extract_vendor_info(finding: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Extracts vendor information from a finding.
+
+    Args:
+        finding (Dict[str, Any]): The finding dictionary.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing vendor information about the finding.
+    """
     vuln_details = finding.get("packageVulnerabilityDetails", {})
     return {
         "referenceUrls": vuln_details.get("referenceUrls"),
@@ -57,11 +94,14 @@ def extract_vendor_info(finding: Dict[str, Any]) -> Dict[str, Any]:
 def extract_findings(findings: Optional[List[Dict[str, Any]]], aws_service: str) -> List[Dict[str, Any]]:
     """
     Extracts and processes findings for a given AWS service.
+
     Args:
         findings (Optional[List[Dict[str, Any]]]): A list of findings dictionaries or None.
         aws_service (str): The name of the AWS service for which findings are being processed.
+
     Returns:
         List[Dict[str, Any]]: A list of processed findings dictionaries. If no findings are provided or an error occurs, an empty list is returned.
+
     The function performs the following steps:
     1. Checks if findings are None or not a list, logs appropriate warnings or errors, and returns an empty list.
     2. Iterates over each finding in the findings list.
@@ -70,6 +110,7 @@ def extract_findings(findings: Optional[List[Dict[str, Any]]], aws_service: str)
     5. Extracts additional details such as network reachability, remediation text and URL, resources, creation, and update timestamps.
     6. Appends the processed finding to the extracted_findings list.
     7. Logs any exceptions that occur during processing and continues with the next finding.
+
     Raises:
         None: Any exceptions during processing are caught and logged.
     """
@@ -81,14 +122,14 @@ def extract_findings(findings: Optional[List[Dict[str, Any]]], aws_service: str)
         logger.error(f"Findings for {aws_service} is not a list: {type(findings)}")
         return []
 
-    extracted_findings = []
+    extracted_findings: List[Dict[str, Any]] = []
     for f in findings:
         try:
             if not isinstance(f, dict):
                 logger.warning(f"Invalid finding structure for {aws_service}: {type(f)}")
                 continue
                 
-            finding = {
+            finding: Dict[str, Any] = {
                 **extract_basic_info(f, aws_service),
                 **extract_service_specific_info(f, aws_service),
                 **extract_vulnerability_details(f),

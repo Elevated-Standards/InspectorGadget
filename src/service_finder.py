@@ -1,25 +1,28 @@
 import os
 import json
-import datetime import datetime
+import datetime
 import sys
 import logging
 import boto3
 from botocore.exceptions import ClientError
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
-def get_service_findings(service_type: str, resource_arn: str = None) -> str:
+def get_service_findings(service_type: str, resource_arn: Optional[str] = None) -> str:
     """
-    Generate filter criteria for AWS Inspector findings.
+    This function creates a JSON string that represents the filter criteria for AWS Inspector findings based on the provided service type and optional resource ARN.
     
     Args:
-        service_type (str): Type of AWS service to filter findings for
-        resource_arn (str, optional): Specific resource ARN to filter by
+        service_type (str): The type of AWS service to filter findings for.
+        resource_arn (Optional[str], optional): The specific resource ARN to filter by. Defaults to None.
         
     Returns:
-        str: JSON string containing the filter criteria
+        str: A JSON string containing the filter criteria.
+        
+    Raises:
+        TypeError: If `service_type` is not a string or `resource_arn` is not a string or None.
     """
     base_criteria = {
         "resourceType": [{

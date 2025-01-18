@@ -2,13 +2,14 @@ import os
 import datetime
 import boto3
 import sys
+from typing import List, Dict
 from botocore.exceptions import ClientError
 from src.base_inspector import BaseInspector
 from src.findings_extractor import extract_findings
 from utils.aws_cli import run_aws_cli
 
 class RdsInspector(BaseInspector):
-    def get_findings(self):
+    def get_findings(self) -> List[Dict]:
         """
         Retrieves findings for all RDS instances if the service is enabled.
 
@@ -30,7 +31,7 @@ class RdsInspector(BaseInspector):
             findings.extend(self._get_db_findings(db_instance_id))
         return findings
 
-    def _get_db_findings(self, db_instance_id):
+    def _get_db_findings(self, db_instance_id: str) -> List[Dict]:
         """
         Retrieves security findings for a specified RDS instance.
 

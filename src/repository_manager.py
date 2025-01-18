@@ -1,6 +1,6 @@
 import os
 import json
-import datetime import datetime
+import datetime 
 import sys
 import logging
 import boto3
@@ -35,7 +35,7 @@ def parse_repository_arn(repo_arn: str) -> Tuple[str, str]:
         logger.error(f"Invalid repository ARN format: {repo_arn}")
         raise ValueError(f"Invalid repository ARN: {repo_arn}") from e
 
-def validate_repository(ecr_client, account_id: str, repo_name: str) -> bool:
+def validate_repository(ecr_client: boto3.client, account_id: str, repo_name: str) -> bool:
     """Validate if repository exists in ECR."""
     try:
         ecr_client.describe_repositories(
@@ -60,7 +60,6 @@ def get_latest_digest(repo_arn: str) -> Optional[str]:
     Raises:
         Exception: If there is an error in retrieving the image digest.
     """
-    """Get latest image digest for repository."""
     try:
         account_id, repo_name = parse_repository_arn(repo_arn)
         ecr_client = boto3.client('ecr')

@@ -2,6 +2,7 @@ import os
 import datetime
 import boto3
 import sys
+from typing import List, Dict
 from botocore.exceptions import ClientError
 from src.base_inspector import BaseInspector
 from src.findings_extractor import extract_findings
@@ -9,7 +10,7 @@ from utils.aws_cli import run_aws_cli
 
 
 class LambdaInspector(BaseInspector):
-    def get_findings(self):
+    def get_findings(self) -> List[Dict]:
         """
         Retrieves a list of findings for all AWS Lambda functions.
 
@@ -28,7 +29,7 @@ class LambdaInspector(BaseInspector):
             findings.extend(self.get_findings_for_function(function_arn))
         return findings
 
-    def get_findings_for_function(self, function_arn):
+    def get_findings_for_function(self, function_arn: str) -> List[Dict]:
         """
         Retrieves security findings for a specified AWS Lambda function.
 

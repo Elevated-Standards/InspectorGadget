@@ -2,13 +2,14 @@ import os
 import datetime
 import boto3
 import sys
+from typing import List
 from botocore.exceptions import ClientError
 from src.base_inspector import BaseInspector
 from src.findings_extractor import extract_findings
 from utils.aws_cli import run_aws_cli
 
 class EksInspector(BaseInspector):
-    def get_findings(self):
+    def get_findings(self) -> List[dict]:
         """
         Retrieves findings for EKS clusters.
 
@@ -33,7 +34,7 @@ class EksInspector(BaseInspector):
             findings.extend(self._get_cluster_findings(cluster_name, account_id))
         return findings
 
-    def _get_cluster_findings(self, cluster_name, account_id):
+    def _get_cluster_findings(self, cluster_name: str, account_id: str) -> List[dict]:
         """
         Retrieves findings for a specified EKS cluster using AWS Inspector.
 

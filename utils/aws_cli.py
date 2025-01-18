@@ -2,13 +2,14 @@ import os
 import json
 import logging
 import subprocess
+from typing import Optional, Dict, Any
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
-def run_aws_cli(command):
+def run_aws_cli(command: str) -> Optional[Dict[str, Any]]:
     """
     Execute an AWS CLI command with retries and error handling.
     
@@ -16,7 +17,7 @@ def run_aws_cli(command):
         command (str): AWS CLI command to execute
         
     Returns:
-        dict: Parsed JSON output from the command
+        Optional[Dict[str, Any]]: Parsed JSON output from the command or None if an error occurs
         
     Raises:
         subprocess.TimeoutExpired: If command execution times out
