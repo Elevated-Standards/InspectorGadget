@@ -9,7 +9,7 @@ from typing import List, Dict, Any, Optional
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from .collector import FindingsCollector
+from collector import FindingsCollector
 from services import (
     LambdaInspector,
     EksInspector,
