@@ -30,11 +30,6 @@ jobs:
         echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}"
         echo "AWS_REGION=${AWS_REGION}"
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install boto3
-
     - name: Prepping Environment
       run: |
         chmod +x $GITHUB_WORKSPACE/.github/workflows/scripts/date.sh
@@ -42,10 +37,15 @@ jobs:
         mkdir -p $GITHUB_WORKSPACE/output/cis
         mkdir -p $GITHUB_WORKSPACE/output/inspector
 
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
     - name: Run AWS Inspector Scan Results
       run: |
         export PYTHONPATH="$PYTHONPATH:$(pwd)/src"
+         python -m src.inspector
 
     - name: Commit and Push Results
       run: |
@@ -54,3 +54,4 @@ jobs:
          git add -A
          git commit -m "${{ env.CI_COMMIT_MESSAGE }}"
          git push origin HEAD:${{ github.ref }}
+
