@@ -10,14 +10,6 @@ from typing import List, Dict, Any, Optional
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from collector import FindingsCollector
-from services import (
-    LambdaInspector,
-    EksInspector,
-    Ec2Inspector,
-    RdsInspector,
-    EcrInspector,
-    CisInspector,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -53,12 +45,41 @@ class Inspector:
         self.collector = FindingsCollector()
         
         # Initialize service inspectors
-        self.lambda_inspector = LambdaInspector(self.client) if enable_lambda else None
-        self.eks_inspector = EksInspector(self.client) if enable_eks else None
-        self.ec2_inspector = Ec2Inspector(self.client) if enable_ec2 else None
-        self.rds_inspector = RdsInspector(self.client) if enable_rds else None
-        self.ecr_inspector = EcrInspector(self.client, repositories_to_scan) if enable_ecr_repos else None
-        self.cis_inspector = CisInspector(self.client) if enable_cis else None
+        if enable_lambda:
+            from services.lambda_inspector import LambdaInspector
+            self.lambda_inspector = LambdaInspector(self.client)
+        else:
+            self.lambda_inspector = None
+
+        if enable_eks:
+            from services.eks_inspector import EksInspector
+            self.eks_inspector = EksInspector(self.client)
+        else:
+            self.eks_inspector = None
+
+        if enable_ec2:
+            from services.ec2_inspector import Ec2Inspector
+            self.ec2_inspector = Ec2Inspector(self.client)
+        else:
+            self.ec2_inspector = None
+
+        if enable_rds:
+            from services.rds_inspector import RdsInspector
+            self.rds_inspector = RdsInspector(self.client)
+        else:
+            self.rds_inspector = None
+
+        if enable_ecr_repos:
+            from services.ecr_inspector import EcrInspector
+            self.ecr_inspector = EcrInspector(self.client, repositories_to_scan)
+        else:
+            self.ecr_inspector = None
+
+        if enable_cis:
+            from services.cis_inspector import CisInspector
+            self.cis_inspector = CisInspector(self.client)
+        else:
+            self.cis_inspector = None
 
     def run(self) -> None:
         """
@@ -81,3 +102,11 @@ class Inspector:
 
         self.collector.save_findings()
         logger.info("Inspector execution completed")
+
+def main():
+    inspector = Inspector()
+    inspector.run()
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    main()

@@ -14,16 +14,19 @@ class BaseInspector:
     
     Attributes:
         client: The client used to interact with the findings service.
+        enabled: A flag indicating whether the inspector is enabled.
     """
     
-    def __init__(self, client):
+    def __init__(self, client, enabled: bool = True):
         """
-        Initializes the BaseInspector with a client.
+        Initializes the BaseInspector with a client and enabled flag.
         
         Args:
             client: The client used to interact with the findings service.
+            enabled (bool): A flag indicating whether the inspector is enabled.
         """
         self.client = client
+        self.enabled = enabled
 
     def get_findings_for_resource(self, resource_id: str, resource_type: str) -> List[Dict[str, Any]]:
         """

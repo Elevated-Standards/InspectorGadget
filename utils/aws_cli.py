@@ -55,6 +55,13 @@ def run_aws_cli(command: str) -> Optional[Dict[str, Any]]:
             logger.error(f"JSON parse error: {je}")
             logger.error(f"Failed JSON string: {result.stdout[:200]}...")
             raise
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Command failed with exit code {e.returncode}")
+        logger.error(f"stderr: {e.stderr}")
+        return None
+    except FileNotFoundError:
+        logger.error("AWS CLI not found. Please install the AWS CLI and ensure it is in your PATH.")
+        return None
     except subprocess.TimeoutExpired:
         logger.error(f"Command timed out after 300 seconds: {command}")
         raise

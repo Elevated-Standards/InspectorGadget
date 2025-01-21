@@ -16,15 +16,20 @@ jobs:
     steps:
     - name: Git clone the repository
       uses: actions/checkout@v4
+#    - name: Configure AWS credentials with OIDC
+#      uses: aws-actions/configure-aws-credentials@v3
+#      with:
+#        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        aws-region: ${{ env.AWS_REGION }}
+
     - name: Configure AWS credentials with OIDC
       uses: aws-actions/configure-aws-credentials@v3
       with:
-        #role-to-assume: arn:aws:iam::145023120730:role/elevated-standards
-        #role-session-name: evidencecollection
-        #aws-region: ${{ env.AWS_REGION }}
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        role-to-assume: arn:aws:iam::145023120730:role/elevated-standards
+        role-session-name: evidencecollection
         aws-region: ${{ env.AWS_REGION }}
+
 
     - name: Debug Environment Variables
       run: |
@@ -48,7 +53,7 @@ jobs:
     - name: Run AWS Inspector Scan Results
       run: |
         export PYTHONPATH="$PYTHONPATH:$(pwd)/src"
-        python -m src.inspector
+        python /workspaces/InspectorGadget/src/inspector.py
 
     - name: Commit and Push Results
       run: |
