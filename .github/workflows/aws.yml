@@ -37,9 +37,11 @@ jobs:
 
     - name: Prepping Environment
       run: |
-        bash utils/date.sh
+        chmod +x $GITHUB_WORKSPACE/.github/workflows/scripts/date.sh
+        bash $GITHUB_WORKSPACE/.github/workflows/scripts/date.sh        
         mkdir -p $GITHUB_WORKSPACE/output/cis
         mkdir -p $GITHUB_WORKSPACE/output/inspector
+
 
     - name: Run AWS Inspector Scan Results
       run: |
