@@ -1,6 +1,6 @@
 import os
 import json
-import datetime 
+import datetime
 import sys
 import logging
 import boto3
@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Optional
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from .collector import FindingsCollector
-from .services import (
+from services import (
     LambdaInspector,
     EksInspector,
     Ec2Inspector,
@@ -22,6 +22,9 @@ from .services import (
 logger = logging.getLogger(__name__)
 
 class Inspector:
+    """
+    A class to initialize and run various AWS service inspectors.
+
     Parameters:
         enable_lambda (bool): Flag to enable Lambda inspector. Default is True.
         enable_eks (bool): Flag to enable EKS inspector. Default is True.
@@ -30,27 +33,11 @@ class Inspector:
         enable_ecr_repos (bool): Flag to enable ECR inspector. Default is False.
         enable_cis (bool): Flag to enable CIS inspector. Default is True.
         repositories_to_scan (Optional[List[str]]): List of ECR repositories to scan. Default is None.
-    Returns:
-        None
+
     Raises:
         boto3.exceptions.Boto3Error: If there is an error initializing the boto3 client.
-    Parameters:
-        None
-    Returns:
-        None
-    Raises:
         FindingsCollectorError: If there is an error collecting or saving findings.
-    """
-    A class to initialize and run various AWS service inspectors.
-    Attributes:
-        client (boto3.client): The boto3 Inspector2 client.
-        collector (FindingsCollector): The collector for findings.
-        lambda_inspector (LambdaInspector or None): The Lambda inspector instance.
-        eks_inspector (EksInspector or None): The EKS inspector instance.
-        ec2_inspector (Ec2Inspector or None): The EC2 inspector instance.
-        rds_inspector (RdsInspector or None): The RDS inspector instance.
-        ecr_inspector (EcrInspector or None): The ECR inspector instance.
-        cis_inspector (CisInspector or None): The CIS inspector instance.
+
     Methods:
         __init__(enable_lambda=True, enable_eks=True, enable_ec2=True, enable_rds=True, 
                  enable_ecr_repos=False, enable_cis=True, repositories_to_scan=None):
@@ -74,6 +61,9 @@ class Inspector:
         self.cis_inspector = CisInspector(self.client) if enable_cis else None
 
     def run(self) -> None:
+        """
+        Executes the enabled inspectors and collects their findings.
+        """
         logger.info("Inspector execution started")
         
         if self.lambda_inspector:
