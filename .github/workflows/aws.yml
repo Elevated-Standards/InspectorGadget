@@ -45,7 +45,7 @@ jobs:
     - name: Run AWS Inspector Scan Results
       run: |
         export PYTHONPATH="$PYTHONPATH:$(pwd)/src"
-         python -m src.inspector
+        python -m src.inspector
 
     - name: Commit and Push Results
       run: |
