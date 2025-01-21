@@ -19,15 +19,18 @@ jobs:
     - name: Configure AWS credentials with OIDC
       uses: aws-actions/configure-aws-credentials@v3
       with:
-        role-to-assume: arn:aws:iam::145023120730:role/elevated-standards
-        role-session-name: evidencecollection
+        #role-to-assume: arn:aws:iam::145023120730:role/elevated-standards
+        #role-session-name: evidencecollection
+        #aws-region: ${{ env.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Debug Environment Variables
       run: |
         echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
         echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
-        echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}"
+        # echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}"
         echo "AWS_REGION=${AWS_REGION}"
 
     - name: Prepping Environment
@@ -54,4 +57,3 @@ jobs:
          git add -A
          git commit -m "${{ env.CI_COMMIT_MESSAGE }}"
          git push origin HEAD:${{ github.ref }}
-
