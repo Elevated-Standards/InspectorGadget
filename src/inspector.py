@@ -10,6 +10,7 @@ from typing import List, Dict, Any, Optional
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from collector import FindingsCollector
+from utils.aws_cli import run_aws_cli
 
 logger = logging.getLogger(__name__)
 
@@ -90,17 +91,23 @@ class Inspector:
         combined_findings = []
 
         if self.lambda_inspector:
-            combined_findings.extend(self.lambda_inspector.get_findings())
+            lambda_findings = run_aws_cli("aws lambda list-functions --region us-east-1 --output json", "Lambda")
+            combined_findings.extend(extract_findings(lambda_findings, "Lambda"))
         if self.eks_inspector:
-            combined_findings.extend(self.eks_inspector.get_findings())
+            eks_findings = run_aws_cli("aws eks list-clusters --region us-east-1 --output json", "EKS")
+            combined_findings.extend(extract_findings(eks_findings, "EKS"))
         if self.ec2_inspector:
-            combined_findings.extend(self.ec2_inspector.get_findings())
+            ec2_findings = run_aws_cli("aws ec2 describe-instances --region us-east-1 --output json", "EC2")
+            combined_findings.extend(extract_findings(ec2_findings, "EC2"))
         if self.rds_inspector:
-            combined_findings.extend(self.rds_inspector.get_findings())
+            rds_findings = run_aws_cli("aws rds describe-db-instances --region us-east-1 --output json", "RDS")
+            combined_findings.extend(extract_findings(rds_findings, "RDS"))
         if self.ecr_inspector:
-            combined_findings.extend(self.ecr_inspector.get_findings())
+            ecr_findings = run_aws_cli("aws ecr describe-repositories --region us-east-1 --output json", "ECR")
+            combined_findings.extend(extract_findings(ecr_findings, "ECR"))
         if self.cis_inspector:
-            combined_findings.extend(self.cis_inspector.get_findings())
+            cis_findings = run_aws_cli("aws inspector2 list-findings --filter-criteria '{\"resourceType\":[{\"comparison\":\"EQUALS\",\"value\":\"CisBenchmark\"}]}' --region us-east-1 --output json", "CIS")
+            combined_findings.extend(extract_findings(cis_findings, "CIS"))
 
         self.collector.add_findings(combined_findings)
         self.collector.save_findings()

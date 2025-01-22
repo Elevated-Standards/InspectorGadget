@@ -75,8 +75,8 @@ class FindingsCollector:
             If there is an issue creating directories or writing to files.
         """
         current_date = datetime.datetime.now()
-        self._save_general_findings(current_date)
-        self._save_cis_findings(current_date)
+        output_path = self._get_output_path(current_date, "inspector")
+        self._save_to_file(output_path, self.findings)
 
     def _save_general_findings(self, current_date: datetime.datetime) -> None:
         """
@@ -124,7 +124,7 @@ class FindingsCollector:
             f"{date.hour:02}{date.minute:02}{date.second:02}.json"
         )
 
-    def _save_to_file(self, path: str, data: Any) -> None:
+    def _save_to_file(self, output_path: str, data: List[Dict[str, Any]]) -> None:
         """
         Saves the given data to a file at the specified path.
 

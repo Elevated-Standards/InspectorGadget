@@ -91,7 +91,7 @@ def extract_vendor_info(finding: Dict[str, Any]) -> Dict[str, Any]:
         "vulnerablePackages": vuln_details.get("vulnerablePackages")
     }
 
-def extract_findings(findings: Optional[List[Dict[str, Any]]], aws_service: str) -> List[Dict[str, Any]]:
+def extract_findings(findings: Optional[Dict[str, Any]], aws_service: str) -> List[Dict[str, Any]]:
     """
     Extracts and processes findings for a given AWS service.
 
@@ -114,16 +114,17 @@ def extract_findings(findings: Optional[List[Dict[str, Any]]], aws_service: str)
     Raises:
         None: Any exceptions during processing are caught and logged.
     """
-    if findings is None:
+    if findings is None or aws_service not in findings:
         logger.warning(f"No findings returned for {aws_service}")
         return []
         
-    if not isinstance(findings, list):
-        logger.error(f"Findings for {aws_service} is not a list: {type(findings)}")
+    findings_list = findings[aws_service]
+    if not isinstance(findings_list, list):
+        logger.error(f"Findings for {aws_service} is not a list: {type(findings_list)}")
         return []
 
     extracted_findings: List[Dict[str, Any]] = []
-    for f in findings:
+    for f in findings_list:
         try:
             if not isinstance(f, dict):
                 logger.warning(f"Invalid finding structure for {aws_service}: {type(f)}")
