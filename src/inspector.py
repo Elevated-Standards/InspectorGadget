@@ -11,6 +11,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from collector import FindingsCollector
 from utils.aws_cli import run_aws_cli
+from findings_extractor import extract_findings
+
 
 logger = logging.getLogger(__name__)
 
