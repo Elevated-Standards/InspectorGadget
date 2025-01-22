@@ -114,11 +114,11 @@ def extract_findings(findings: Optional[Dict[str, Any]], aws_service: str) -> Li
     Raises:
         None: Any exceptions during processing are caught and logged.
     """
-    if findings is None or aws_service not in findings:
+     if findings is None or aws_service not in findings:
         logger.warning(f"No findings returned for {aws_service}")
         return []
         
-    findings_list = findings[aws_service]
+    findings_list = findings.get(aws_service, [])
     if not isinstance(findings_list, list):
         logger.error(f"Findings for {aws_service} is not a list: {type(findings_list)}")
         return []

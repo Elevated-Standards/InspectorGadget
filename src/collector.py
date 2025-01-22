@@ -75,8 +75,8 @@ class FindingsCollector:
             If there is an issue creating directories or writing to files.
         """
         current_date = datetime.datetime.now()
-        output_path = self._get_output_path(current_date, "inspector")
-        self._save_to_file(output_path, self.findings)
+        self._save_general_findings(current_date)
+        self._save_cis_findings(current_date)
 
     def _save_general_findings(self, current_date: datetime.datetime) -> None:
         """
@@ -130,7 +130,7 @@ class FindingsCollector:
 
         Parameters:
         -----------
-        path : str
+        output_path : str
             The file path where the data will be saved.
         data : Any
             The data to be saved to the file.
@@ -140,6 +140,6 @@ class FindingsCollector:
         OSError:
             If there is an issue creating directories or writing to the file.
         """
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w") as f:
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, "w") as f:
             json.dump(data, f, indent=2)

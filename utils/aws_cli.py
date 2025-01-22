@@ -26,7 +26,10 @@ def run_aws_cli(command: str, service: str) -> Optional[Dict[str, Any]]:
         Exception: For other unexpected errors
     """
     try:
-        command += f" --region {os.environ.get('AWS_REGION', 'us-east-1')} --output json"
+        if "--region" not in command:
+            command += f" --region {os.environ.get('AWS_REGION', 'us-east-1')}"
+        if "--output" not in command:
+            command += " --output json"
         logger.info(f"Executing command: {command}")
         
         result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, 
