@@ -87,19 +87,22 @@ class Inspector:
         """
         logger.info("Inspector execution started")
         
-        if self.lambda_inspector:
-            self.collector.add_findings(self.lambda_inspector.get_findings())
-        if self.eks_inspector:
-            self.collector.add_findings(self.eks_inspector.get_findings())
-        if self.ec2_inspector:
-            self.collector.add_findings(self.ec2_inspector.get_findings())
-        if self.rds_inspector:
-            self.collector.add_findings(self.rds_inspector.get_findings())
-        if self.ecr_inspector:
-            self.collector.add_findings(self.ecr_inspector.get_findings())
-        if self.cis_inspector:
-            self.collector.add_cis_findings(self.cis_inspector.get_findings())
+        combined_findings = []
 
+        if self.lambda_inspector:
+            combined_findings.extend(self.lambda_inspector.get_findings())
+        if self.eks_inspector:
+            combined_findings.extend(self.eks_inspector.get_findings())
+        if self.ec2_inspector:
+            combined_findings.extend(self.ec2_inspector.get_findings())
+        if self.rds_inspector:
+            combined_findings.extend(self.rds_inspector.get_findings())
+        if self.ecr_inspector:
+            combined_findings.extend(self.ecr_inspector.get_findings())
+        if self.cis_inspector:
+            combined_findings.extend(self.cis_inspector.get_findings())
+
+        self.collector.add_findings(combined_findings)
         self.collector.save_findings()
         logger.info("Inspector execution completed")
 
