@@ -7,32 +7,60 @@ assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+# Bug Report
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+> If you need more information about how to fill in this template, read the accompanying [guide](guide_bug-report.md).
+>
+> This template includes writing instructions and boilerplate text that you can customize, use as-is, or completely replace with your own text. This text is indicated in {curly brackets}. Make sure you replace the placeholders with your own text.
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+## Title
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+<!--{A description of the issue using key words relating to the issue. 50 to 80 characters recommended. Description should cover the problem, the action, and the location (if relevant).}-->
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+## Summary (optional)
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+<!--{If the title is insufficient for summarizing the bug, use the summary to detail the bug as concisely as possible. 3-4 sentences recommended.}
 
-**Additional context**
-Add any other context about the problem here.
+## Environment
+
+<!--{Detail the specific environment used when the bug was encountered.}-->
+
+* {Product version}
+* {Browser}
+* {Installed packages and versions}
+* {Operating system}
+* {Device model}
+* {Connection details (type, speed, any packet loss)}
+
+## Steps to reproduce
+
+<!--{An ordered list of the steps taken where the result was encountering the bug. Include any observations of relevance such as unexpected output, visual glitches, unusual process duration.}-->
+
+* {Step 1}
+* {Step 2}
+* {Step 3}
+
+## Observed behavior
+
+<!--{Briefly describe the result of the steps taken that resulted in the bug being encountered. Avoid any assumptions regarding the behavior.}-->
+
+## Expected behavior (optional)
+
+<!--{Briefly describe the expected result of the steps taken.}-->
+
+## Proof (optional)
+
+<!--{Provide a copy of any relevant logs, screenshots, or malformed output if relevant.}-->
+
+## Test data (optional)
+
+<!--{If the bug is only encountered when using specific test data, provide a copy of that data. If the data needs to be redacted, please ensure the redacted data also causes the unexpected behavior using the same steps.}-->
+
+## Additional context (optional)
+<!--
+{If any additional context is required, detail that context here.}
+
+{Please keep in mind the project team may need additional clarification after the report is submitted.}-->
+
+---
+
