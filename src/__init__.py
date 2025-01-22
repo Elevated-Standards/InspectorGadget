@@ -5,7 +5,6 @@ from utils.aws_cli import run_aws_cli
 
 
 __all__ = [
-    'Inspector',
     'extract_findings',
     'get_service_findings',
     'save_findings',
