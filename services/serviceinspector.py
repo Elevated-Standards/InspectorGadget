@@ -40,7 +40,7 @@ class ServiceInspector(BaseInspector):
 
     def get_lambda_findings(self) -> List[Dict[str, Any]]:
         command = "aws lambda list-functions"
-        result = run_aws_cli(command)
+        result = run_aws_cli(command, "Lambda")
         functions = [func["FunctionArn"] for func in result.get("Functions", [])] if result else []
         findings = []
         for function_arn in functions:
@@ -53,12 +53,12 @@ class ServiceInspector(BaseInspector):
             f"--filter-criteria '{{\"resourceType\":[{{\"comparison\":\"EQUALS\",\"value\":\"LambdaFunction\"}}], "
             f"\"resourceArn\":[{{\"comparison\":\"EQUALS\",\"value\":\"{function_arn}\"}}]}}'"
         )
-        out = run_aws_cli(command)
+        out = run_aws_cli(command, "Lambda")
         return extract_findings(out.get("findings", []), "Lambda") if out else []
 
     def get_eks_findings(self) -> List[Dict[str, Any]]:
         command = "aws eks list-clusters"
-        result = run_aws_cli(command)
+        result = run_aws_cli(command, "EKS")
         clusters = result.get("clusters", []) if result else []
         findings = []
         sts_client = boto3.client('sts')
@@ -73,12 +73,12 @@ class ServiceInspector(BaseInspector):
             f"--filter-criteria '{{\"resourceType\":[{{\"comparison\":\"EQUALS\",\"value\":\"EksCluster\"}}], "
             f"\"resourceArn\":[{{\"comparison\":\"EQUALS\",\"value\":\"arn:aws:eks:{os.environ.get('AWS_REGION', 'us-east-1')}:{account_id}:cluster/{cluster_name}\"}}]}}'"
         )
-        out = run_aws_cli(command)
+        out = run_aws_cli(command, "EKS")
         return extract_findings(out.get("findings", []), "EKS") if out else []
 
     def get_ec2_findings(self) -> List[Dict[str, Any]]:
         command = "aws ec2 describe-instances"
-        result = run_aws_cli(command)
+        result = run_aws_cli(command, "EC2")
         instances = self._extract_instance_ids(result)
         return self._get_instances_findings(instances)
 
@@ -104,12 +104,12 @@ class ServiceInspector(BaseInspector):
             f"--filter-criteria '{{\"resourceType\":[{{\"comparison\":\"EQUALS\",\"value\":\"Ec2Instance\"}}], "
             f"\"resourceArn\":[{{\"comparison\":\"EQUALS\",\"value\":\"arn:aws:ec2:{region}:{account_id}:instance/{instance_id}\"}}]}}'"
         )
-        out = run_aws_cli(command)
+        out = run_aws_cli(command, "EC2")
         return extract_findings(out.get("findings", []), "EC2") if out else []
 
     def get_rds_findings(self) -> List[Dict[str, Any]]:
         command = "aws rds describe-db-instances"
-        result = run_aws_cli(command)
+        result = run_aws_cli(command, "RDS")
         instances = [db["DBInstanceIdentifier"] for db in result.get("DBInstances", [])] if result else []
         findings = []
         for db_instance_id in instances:
@@ -122,7 +122,7 @@ class ServiceInspector(BaseInspector):
             f"--filter-criteria '{{\"resourceType\":[{{\"comparison\":\"EQUALS\",\"value\":\"RdsInstance\"}}], "
             f"\"resourceArn\":[{{\"comparison\":\"EQUALS\",\"value\":\"{db_instance_id}\"}}]}}'"
         )
-        out = run_aws_cli(command)
+        out = run_aws_cli(command, "RDS")
         return extract_findings(out.get("findings", []), "RDS") if out else []
 
     def get_ecr_findings(self) -> List[Dict[str, Any]]:
@@ -139,5 +139,5 @@ class ServiceInspector(BaseInspector):
             f"--filter-criteria '{{\"resourceType\":[{{\"comparison\":\"EQUALS\",\"value\":\"EcrRepository\"}}], "
             f"\"resourceArn\":[{{\"comparison\":\"EQUALS\",\"value\":\"{repository_name}\"}}]}}'"
         )
-        out = run_aws_cli(command)
+        out = run_aws_cli(command, "ECR")
         return extract_findings(out.get("findings", []), "ECR") if out else []
