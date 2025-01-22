@@ -1,4 +1,9 @@
 # InspectorGadget
 
-Pulls Scan Results using AWS Inspector API and combines the different AWS Inspector Scan Results into a organized output. And POAM Ready.
+Pulls scan results using the AWS Inspector API, combines various AWS Inspector scan results, and formats them scan results into an organized output that is POAM-ready.
+
+
+
+
+
 
