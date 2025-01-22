@@ -12,7 +12,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from collector import FindingsCollector
 from utils.aws_cli import run_aws_cli
 from findings_extractor import extract_findings
-
+from services.serviceinspector import ServiceInspector
 
 logger = logging.getLogger(__name__)
 
@@ -47,42 +47,8 @@ class Inspector:
         self.client = boto3.client('inspector2')
         self.collector = FindingsCollector()
         
-        # Initialize service inspectors
-        if enable_lambda:
-            from services.lambda_inspector import LambdaInspector
-            self.lambda_inspector = LambdaInspector(self.client)
-        else:
-            self.lambda_inspector = None
-
-        if enable_eks:
-            from services.eks_inspector import EksInspector
-            self.eks_inspector = EksInspector(self.client)
-        else:
-            self.eks_inspector = None
-
-        if enable_ec2:
-            from services.ec2_inspector import Ec2Inspector
-            self.ec2_inspector = Ec2Inspector(self.client)
-        else:
-            self.ec2_inspector = None
-
-        if enable_rds:
-            from services.rds_inspector import RdsInspector
-            self.rds_inspector = RdsInspector(self.client)
-        else:
-            self.rds_inspector = None
-
-        if enable_ecr_repos:
-            from services.ecr_inspector import EcrInspector
-            self.ecr_inspector = EcrInspector(self.client, repositories_to_scan)
-        else:
-            self.ecr_inspector = None
-
-        if enable_cis:
-            from services.cis_inspector import CisInspector
-            self.cis_inspector = CisInspector(self.client)
-        else:
-            self.cis_inspector = None
+        # Initialize service inspector
+        self.service_inspector = ServiceInspector(self.client, repositories_to_scan, enabled=True)
 
     def run(self) -> None:
         """
@@ -90,26 +56,7 @@ class Inspector:
         """
         logger.info("Inspector execution started")
         
-        combined_findings = []
-
-        if self.lambda_inspector:
-            lambda_findings = run_aws_cli("aws lambda list-functions --region us-east-1 --output json", "Lambda")
-            combined_findings.extend(extract_findings(lambda_findings, "Lambda"))
-        if self.eks_inspector:
-            eks_findings = run_aws_cli("aws eks list-clusters --region us-east-1 --output json", "EKS")
-            combined_findings.extend(extract_findings(eks_findings, "EKS"))
-        if self.ec2_inspector:
-            ec2_findings = run_aws_cli("aws ec2 describe-instances --region us-east-1 --output json", "EC2")
-            combined_findings.extend(extract_findings(ec2_findings, "EC2"))
-        if self.rds_inspector:
-            rds_findings = run_aws_cli("aws rds describe-db-instances --region us-east-1 --output json", "RDS")
-            combined_findings.extend(extract_findings(rds_findings, "RDS"))
-        if self.ecr_inspector:
-            ecr_findings = run_aws_cli("aws ecr describe-repositories --region us-east-1 --output json", "ECR")
-            combined_findings.extend(extract_findings(ecr_findings, "ECR"))
-        if self.cis_inspector:
-            cis_findings = run_aws_cli("aws inspector2 list-findings --filter-criteria '{\"resourceType\":[{\"comparison\":\"EQUALS\",\"value\":\"CisBenchmark\"}]}' --region us-east-1 --output json", "CIS")
-            combined_findings.extend(extract_findings(cis_findings, "CIS"))
+        combined_findings = self.service_inspector.get_findings()
 
         self.collector.add_findings(combined_findings)
         self.collector.save_findings()
