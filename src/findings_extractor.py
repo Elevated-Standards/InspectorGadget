@@ -96,7 +96,7 @@ def extract_findings(findings: Optional[Dict[str, Any]], aws_service: str) -> Li
     Extracts and processes findings for a given AWS service.
 
     Args:
-        findings (Optional[List[Dict[str, Any]]]): A list of findings dictionaries or None.
+        findings (Optional[Dict[str, Any]]): A dictionary containing findings or None.
         aws_service (str): The name of the AWS service for which findings are being processed.
 
     Returns:
@@ -114,7 +114,7 @@ def extract_findings(findings: Optional[Dict[str, Any]], aws_service: str) -> Li
     Raises:
         None: Any exceptions during processing are caught and logged.
     """
-     if findings is None or aws_service not in findings:
+    if findings is None or aws_service not in findings:
         logger.warning(f"No findings returned for {aws_service}")
         return []
         
